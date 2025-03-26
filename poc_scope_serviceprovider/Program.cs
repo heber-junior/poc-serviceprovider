@@ -52,8 +52,10 @@ app.MapGet("/test", (HttpContext httpContext) =>
         
         fooService1.SetName("Foo 2");
         barService1.SetName("Bar 2");
-        
-        using (var scope2 = scope1.ServiceProvider.CreateScope())
+
+        var scope1Factory = scope1.ServiceProvider.GetService<IServiceScopeFactory>()!;
+        // using (var scope2 = scope1.ServiceProvider.CreateScope())
+        using (var scope2 = scope1Factory.CreateScope())
         {
             IFooSingleton fooService2 = scope2.ServiceProvider.GetService<IFooSingleton>()!;
             IBarScoped barService2 = scope2.ServiceProvider.GetService<IBarScoped>()!;

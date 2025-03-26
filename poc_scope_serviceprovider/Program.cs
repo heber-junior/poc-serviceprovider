@@ -34,14 +34,20 @@ app.MapGet("/test", (HttpContext httpContext) =>
     Console.WriteLine(bar.GetName());
     Console.WriteLine("----------\n");
     
+    //*Note: CreateScope() register the following interfaces automatically.
+    // IServiceProvider
+    // IServiceScopeFactory
     using (var scope1 = provider.CreateScope())
     {
         IFooSingleton fooService1 = scope1.ServiceProvider.GetService<IFooSingleton>()!;
         IBarScoped barService1 = scope1.ServiceProvider.GetService<IBarScoped>()!;
+        // IServiceProvider scope1sp = scope1.ServiceProvider.GetService<IServiceProvider>()!;
 
         Console.WriteLine("New Scope 1");
         Console.WriteLine(fooService1.GetName());
         Console.WriteLine(barService1.GetName());
+        // Console.WriteLine($"SPs are equals {scope1sp.Equals(scope1.ServiceProvider)}");
+        // Console.WriteLine($"Provider and Scope1 are  equals {provider.Equals(scope1sp)}");
         Console.WriteLine("----------\n");
         
         fooService1.SetName("Foo 2");
@@ -69,19 +75,6 @@ app.MapGet("/test", (HttpContext httpContext) =>
         Console.WriteLine(fooService3.GetName());
         Console.WriteLine(barService3.GetName());
         Console.WriteLine("----------\n");
-
-        
-        // IServiceCollection spCollection = provider.GetRequiredService<IServiceCollection>();
-        // IServiceProvider newServiceProviderWithSingletonCopy = ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(spCollection, true);
-        //
-        // IFooSingleton fooService4 = newServiceProviderWithSingletonCopy.GetService<IFooSingleton>()!;
-        // IBarScoped barService4 = newServiceProviderWithSingletonCopy.GetService<IBarScoped>()!;
-        //
-        // Console.WriteLine("New Service provider with copy of singletons");
-        // Console.WriteLine(fooService4.GetName());
-        // Console.WriteLine(barService4.GetName());
-        // Console.WriteLine("----------\n");
-        
     }
 }).WithName("RunTest");
 
